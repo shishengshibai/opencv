@@ -21,7 +21,8 @@ MAX_RADIUS = 350        # 【最大半径】大于这个半径的圆不认（防
 # ==========================================================
 # ==================== 3. 追踪与防闪烁参数 ====================
 # ==========================================================
-SMOOTH_FACTOR = 0.3     # 【平滑度】越小越平滑（像挂了弹簧），越大越跟手。建议 0.2 ~ 0.5
+SMOOTH_FACTOR = 1.0    # 【平滑度】越小越平滑（像挂了弹簧），越大越跟手。建议 0.2 ~ 0.5
+  
 MISSING_FRAMES_MAX = 5  # 【丢失容忍度】球被手挡住时，绿圈停留在原地的帧数（1秒大概30帧）
 
 # 全局变量，用来记录上一次画圈的位置
@@ -40,7 +41,9 @@ def detect_basketball(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, LOWER_ORANGE, UPPER_ORANGE)
     
-    # 轻微去噪
+    # 闭运算填补篮球橙色区域中的窄黑缝，再做轻微去噪
+    kernel_close = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close)
     kernel = np.ones((3, 3), np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     
