@@ -3,8 +3,8 @@ import numpy as np
 import math
 
 # ===================== 你的颜色参数 =====================
-LOWER_ORANGE = np.array([0, 115, 102])   
-UPPER_ORANGE = np.array([25, 255, 255])
+LOWER_ORANGE = np.array([0, 125, 64])   
+UPPER_ORANGE = np.array([15, 255, 255])
 
 # ================= 防闪烁追踪变量 =================
 last_x, last_y, last_r = 0, 0, 0
@@ -60,7 +60,7 @@ def detect_basketball(frame):
             cov = hull_area / circle_area
             
             # 只有长得很像圆的才要
-            if cov > 0.6:
+            if cov > 0.7:
                 # 取圆度最高的那一个
                 if best_circle is None or cov > best_circle[3]:
                     best_circle = (cx, cy, radius, cov)

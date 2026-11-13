@@ -7,7 +7,7 @@ import math
 # ==========================================================
 # 如果脸被抠出来了（Mask里脸变白），把 S 调高（比如 160）
 # 如果球上的黑色字母把球切断了，把 V 调低（比如 80）
-LOWER_ORANGE = np.array([0, 115, 102])   # H最小值, S最小值, V最小值
+LOWER_ORANGE = np.array([0, 114, 77])   # H最小值, S最小值, V最小值
 UPPER_ORANGE = np.array([20, 255, 255])  # H最大值, S最大值, V最大值
 
 # ==========================================================
@@ -22,7 +22,7 @@ MAX_RADIUS = 350        # 【最大半径】大于这个半径的圆不认（防
 # ==================== 3. 追踪与防闪烁参数 ====================
 # ==========================================================
 SMOOTH_FACTOR = 1.0    # 【平滑度】越小越平滑（像挂了弹簧），越大越跟手。建议 0.2 ~ 0.5
-  
+SMOOTH_RADIUS = 0.3          # 【半径平滑度】越小越平滑，越大越跟手。建议 0.2 ~ 0.5  
 MISSING_FRAMES_MAX = 5  # 【丢失容忍度】球被手挡住时，绿圈停留在原地的帧数（1秒大概30帧）
 
 # 全局变量，用来记录上一次画圈的位置
@@ -76,7 +76,7 @@ def detect_basketball(frame):
             # ================= 4. 圆弧匹配灵敏度 =================
             # ==========================================================
             # cov 要求越小，越容易画出圈（哪怕球缺了一大半）；要求越大，越严格
-            if cov > 0.25:  
+            if cov > 0.35:  
                 if best_circle is None or cov > best_circle[3]:
                     best_circle = (cx, cy, radius, cov)
 
@@ -91,7 +91,7 @@ def detect_basketball(frame):
         else:
             last_x = SMOOTH_FACTOR * cx + (1 - SMOOTH_FACTOR) * last_x
             last_y = SMOOTH_FACTOR * cy + (1 - SMOOTH_FACTOR) * last_y
-            last_r = SMOOTH_FACTOR * radius + (1 - SMOOTH_FACTOR) * last_r
+            last_r = SMOOTH_RADIUS * radius + (1 - SMOOTH_RADIUS) * last_r
 
     if not found_this_frame:
         if missing_frames < MISSING_FRAMES_MAX:
